@@ -1,13 +1,15 @@
 ﻿using Datalagring_Course_submission.Models.Forms;
+using Microsoft.Identity.Client;
 
 namespace Datalagring_Course_submission.Services;
 
 internal class MenuService
 {
-	private bool mainMenuRun = true;
 
+	#region MainMenu
 	public async Task MainMenuAsync()
 	{
+		bool mainMenuRun = true;
 		do
 		{
 			Console.Clear();
@@ -20,6 +22,7 @@ internal class MenuService
 					await OwnerMenuAsync();
 					break;
 				case "2":
+					await EmployeeMenuAsync();
 					break;
 				case "3":
 					break;
@@ -30,7 +33,9 @@ internal class MenuService
 		}
 		while (mainMenuRun);
 	}
+	#endregion
 
+	#region OwnerSubMenu
 	public async Task OwnerMenuAsync()
 	{
 		bool OwnerMenuRun = true;
@@ -78,10 +83,10 @@ internal class MenuService
 		}
 		while (OwnerMenuRun);
 	}
-
+	
 	public async Task CreateOwnerAsync()
 	{
-		var newRegistrationOwner = new RegistrationOwnerForm();
+		var newRegistrationOwner = new OwnerForm();
 
 		Console.WriteLine("Alla med en stjärna (*) måste fyllas i.");
 
@@ -105,31 +110,41 @@ internal class MenuService
 
 		Console.Write("*Stad: ");
 		newRegistrationOwner.City = Console.ReadLine()!.Trim();
+
 		var emailExist = await OwnerService.GetSearchedOwnerByEmail(newRegistrationOwner.Email);
+
+
+
 		if (emailExist != null)
 			Console.WriteLine("Din email finns redan registrerad i databasen, använd en ny email eller sök på användare");
+
 		if (string.IsNullOrEmpty(newRegistrationOwner.FirstName))
 			Console.WriteLine("Var vänlig att fyll i förnamn");
+
 		if (string.IsNullOrEmpty(newRegistrationOwner.LastName))
 			Console.WriteLine("Var vänlig att fyll i Efternamn");
+
 		if (string.IsNullOrEmpty(newRegistrationOwner.Email))
 			Console.WriteLine("Var vänlig att fyll i Email");
+
 		if (string.IsNullOrEmpty(newRegistrationOwner.StreetName))
 			Console.WriteLine("Var vänlig att fyll i Gatuadress");
+
 		if (string.IsNullOrEmpty(newRegistrationOwner.PostalCode))
 			Console.WriteLine("Var vänlig att fyll i Postnummer");
+
 		if (string.IsNullOrEmpty(newRegistrationOwner.City))
 			Console.WriteLine("Var vänlig att fyll i stad");
-		if (
-			!string.IsNullOrEmpty(newRegistrationOwner.FirstName) &&
+
+		if (!string.IsNullOrEmpty(newRegistrationOwner.FirstName) &&
 			!string.IsNullOrEmpty(newRegistrationOwner.LastName) &&
 			!string.IsNullOrEmpty(newRegistrationOwner.Email) &&
 			!string.IsNullOrEmpty(newRegistrationOwner.StreetName) &&
 			!string.IsNullOrEmpty(newRegistrationOwner.PostalCode) &&
 			!string.IsNullOrEmpty(newRegistrationOwner.City) &&
 			newRegistrationOwner.PostalCode.Length < 7 &&
-			newRegistrationOwner.PhoneNumber.Length < 14
-			)
+			newRegistrationOwner.PhoneNumber.Length < 14 &&
+			emailExist == null)
 		{
 			await OwnerService.SaveOwnerAsync(newRegistrationOwner);
 			Console.WriteLine($"Grattis {newRegistrationOwner.FirstName} {newRegistrationOwner.LastName}! Du har nu skapat din användare!");
@@ -210,4 +225,126 @@ internal class MenuService
 		else
 			Console.WriteLine("Något fel inträffade, försök igen senare.");
 	}
+	#endregion
+
+	#region EmployeeSubMenu
+	public async Task EmployeeMenuAsync()
+	{
+		bool EmployeeMenuRun = true;
+		Console.Clear();
+		Console.WriteLine("Välj något av följande alternativ:");
+		Console.WriteLine("1. Skapa en anställd \n2. Få fram alla anstälda \n3. Gå tillbaka. ");
+		do
+		{
+			switch (Console.ReadLine())
+			{
+				case "1":
+					Console.Clear();
+					await CreateEmployeeAsync();
+					Console.WriteLine("Tryck på valfri tanget för att gå tillbaka till huvudmenyn");
+					Console.ReadKey();
+
+					EmployeeMenuRun = false;
+					break;
+				case "2":
+					Console.Clear();
+					await AllEmployees();
+					Console.WriteLine("Tryck på valfri tanget för att gå tillbaka till huvudmenyn");
+					Console.ReadKey();
+
+					EmployeeMenuRun = false;
+					break;
+				case "3":
+					EmployeeMenuRun = false;
+					break;
+			}
+		}
+		while (EmployeeMenuRun);
+	}
+
+	public async Task CreateEmployeeAsync()
+	{
+		var newEmployee = new EmployeeForm();
+		Console.WriteLine("Vilken position ska den anställda ha?");
+		Console.WriteLine("1. Property Manager \n2. Leasing Agent \n3. Asset Manager \n4. Maintenance Technician");
+		Console.WriteLine("Skriv siffran på ett av ovanstående (1-4)");
+		if (int.TryParse(Console.ReadLine(), out int jobId))
+		{
+			newEmployee.JobId = jobId;
+			Console.WriteLine("Alla med en stjärna (*) måste fyllas i.");
+
+			Console.Write("*Förnamn: ");
+			newEmployee.FirstName = Console.ReadLine()!.Trim();
+
+			Console.Write("*Efternamn: ");
+			newEmployee.LastName = Console.ReadLine()!.Trim();
+
+			Console.Write("*Email: ");
+			newEmployee.Email = Console.ReadLine()!.Trim();
+
+			Console.Write("Telefonnummer (max 13 siffror): ");
+			newEmployee.PhoneNumber = Console.ReadLine()!.Trim();
+
+			var JobIdExists = await EmployeeService.GetSearchedPositionById(newEmployee.JobId);
+
+			if (JobIdExists == null)
+				Console.WriteLine("Den position finns inte.");
+
+			if (string.IsNullOrEmpty(newEmployee.FirstName))
+				Console.WriteLine("Var vänlig att fyll i förnamn");
+
+			if (string.IsNullOrEmpty(newEmployee.LastName))
+				Console.WriteLine("Var vänlig att fyll i Efternamn");
+
+			if (string.IsNullOrEmpty(newEmployee.Email))
+				Console.WriteLine("Var vänlig att fyll i Email");
+
+			if (string.IsNullOrEmpty(newEmployee.PhoneNumber))
+				Console.WriteLine("Var vänlig att fyll i Telefon-nummer");
+
+			if (!string.IsNullOrEmpty(newEmployee.FirstName) &&
+				!string.IsNullOrEmpty(newEmployee.LastName) &&
+				!string.IsNullOrEmpty(newEmployee.Email) &&
+				!string.IsNullOrEmpty(newEmployee.PhoneNumber) &&
+				newEmployee.PhoneNumber.Length < 14 &&
+				JobIdExists != null)
+
+			{
+				await EmployeeService.SaveEmployeeAsync(newEmployee);
+				Console.WriteLine($"Grattis {newEmployee.FirstName} {newEmployee.LastName}! Du är nu anställd som {JobIdExists.Title}!");
+			}
+			else
+			{
+				Console.WriteLine("Din anställd skapades inte. tryck på valfri knapp för att fortsätta. Detta kan bero på att du inte fyllde i allt eller du skrev in något felaktigt.");
+			}
+		}
+		else
+		{
+			Console.WriteLine("Du måste skriva in en siffra");
+		}
+
+
+
+
+	}
+
+	public static async Task AllEmployees()
+	{
+		var employees = await EmployeeService.GetAllEmployees();
+		if (employees != null)
+		{
+			foreach (var employee in employees)
+			{
+				Console.WriteLine($"Namn: {employee.FullName()}");
+				Console.WriteLine($"Email: {employee.Email}");
+				Console.WriteLine($"Telenummer: {employee.PhoneNumber} \n");
+			}
+		}
+		else
+		{
+			Console.WriteLine("Det finns inga anställda i företaget än.");
+		}
+	}
+
+	#endregion
 }

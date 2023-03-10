@@ -12,45 +12,45 @@ internal class OwnerService
 {
 	private readonly static DataContext _context = new DataContext();
 
-	public static async Task SaveOwnerAsync(RegistrationOwnerForm registrationOwnerForm)
+	public static async Task SaveOwnerAsync(OwnerForm newOwner)
 	{
-		var ownerEntity = new OwnerEntity
+		var newOwnerEntity = new OwnerEntity
 		{
-			FirstName = registrationOwnerForm.FirstName,
-			LastName = registrationOwnerForm.LastName,
-			Email = registrationOwnerForm.Email,
-			PhoneNumber = registrationOwnerForm.PhoneNumber,
+			FirstName = newOwner.FirstName,
+			LastName = newOwner.LastName,
+			Email = newOwner.Email,
+			PhoneNumber = newOwner.PhoneNumber,
 		};
 
 		var adressEntity = await _context.Adresses.SingleOrDefaultAsync
 		(
-			addresses => addresses.StreetName == registrationOwnerForm.StreetName &&
-			addresses.PostalCode == registrationOwnerForm.PostalCode &&
-			addresses.City == registrationOwnerForm.City
+			addresses => addresses.StreetName == newOwner.StreetName &&
+			addresses.PostalCode == newOwner.PostalCode &&
+			addresses.City == newOwner.City
 		);
 
 		if (adressEntity != null)
 		{
-			ownerEntity.AdressId = adressEntity.Id;
+			newOwnerEntity.AdressId = adressEntity.Id;
 		}
 		else
 		{
-			ownerEntity.Adress = new AddressEntity
+			newOwnerEntity.Adress = new AddressEntity
 			{
-				StreetName = registrationOwnerForm.StreetName,
-				PostalCode = registrationOwnerForm.PostalCode,
-				City = registrationOwnerForm.City,
+				StreetName = newOwner.StreetName,
+				PostalCode = newOwner.PostalCode,
+				City = newOwner.City,
 			};
 		}
-		_context.Add(ownerEntity);
+		_context.Add(newOwnerEntity);
 		await _context.SaveChangesAsync();
 	}
 
-	public static async Task<IEnumerable<RegistrationOwnerForm>> GetAllOwnersAsync()
+	public static async Task<IEnumerable<OwnerForm>> GetAllOwnersAsync()
 	{
-		var owners = new List<RegistrationOwnerForm>();
+		var owners = new List<OwnerForm>();
 		foreach (var owner in await _context.Owners.Include(x => x.Adress).ToListAsync())
-			owners.Add(new RegistrationOwnerForm
+			owners.Add(new OwnerForm
 			{
 				FirstName = owner.FirstName,
 				LastName = owner.LastName,
@@ -62,20 +62,16 @@ internal class OwnerService
 
 			});
 		if (owners.Any())
-		{
 			return owners;
-		}
 		else
-		{
 			return null!;
-		}
 	}
 
-	public static async Task<IEnumerable<RegistrationOwnerForm>> GetSearchedOwnerByName(string searchName)
+	public static async Task<IEnumerable<OwnerForm>> GetSearchedOwnerByName(string searchName)
 	{
-		var owners = new List<RegistrationOwnerForm>();
+		var owners = new List<OwnerForm>();
 		foreach (var owner in await _context.Owners.Where(owner => owner.FirstName == searchName || owner.LastName == searchName).Include(x => x.Adress).ToListAsync())
-			owners.Add(new RegistrationOwnerForm
+			owners.Add(new OwnerForm
 			{
 				FirstName = owner.FirstName,
 				LastName = owner.LastName,
@@ -96,11 +92,11 @@ internal class OwnerService
 		}
 	}
 
-	public static async Task<RegistrationOwnerForm> GetSearchedOwnerByEmail(string email)
+	public static async Task<OwnerForm> GetSearchedOwnerByEmail(string email)
 	{ 
 		var owner = await _context.Owners.Include(x => x.Adress).FirstOrDefaultAsync(x => x.Email == email);
 		if (owner != null)
-			return new RegistrationOwnerForm
+			return new OwnerForm
 			{
 				FirstName = owner.FirstName,
 				LastName = owner.LastName,
