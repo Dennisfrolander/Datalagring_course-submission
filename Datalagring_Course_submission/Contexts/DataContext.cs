@@ -30,6 +30,7 @@ internal class DataContext : DbContext
 
 	#endregion
 
+	#region entities
 	public DbSet<AddressEntity> Adresses { get; set; } = null!;
 	public DbSet<OwnerEntity> Owners { get; set; } = null!;
 	public DbSet<PositionEntity> Positions { get; set; } = null!;
@@ -38,6 +39,7 @@ internal class DataContext : DbContext
 	public DbSet<StatusEntity> Statuses { get; set; } = null!;
 	public DbSet<CommentEntity> Comments { get; set; } = null!;
 
+	#endregion
 
 
 
