@@ -1,12 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Datalagring_Course_submission.Models.Entities
+namespace Datalagring_Course_submission.Models.Entities;
+
+internal class CommentEntity
 {
-	internal class CommentEntity
-	{
-	}
+	[Key]
+	public int Id { get; set; }
+
+	[Required]
+	[Column(TypeName = "nvarchar(500)")]
+	public string Description { get; set; } = null!;
+
+	[Required]
+	[Column(TypeName = "datetime")]
+	public DateTime CreatedDate { get; set; }
+
+	[Required]
+	public int IssueId { get; set; }
+	public IssueEntity Issue { get; set; } = null!;
+
+	[Required]
+	public int EmployeeId { get; set; }
+	public EmployeeEntity Employee { get; set; } = null!;
+
 }

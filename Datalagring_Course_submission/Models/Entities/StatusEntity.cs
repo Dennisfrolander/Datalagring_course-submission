@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Datalagring_Course_submission.Models.Entities
+namespace Datalagring_Course_submission.Models.Entities;
+
+internal class StatusEntity
 {
-	internal class StatusEntity
-	{
-	}
+	[Key]
+	public int Id { get; set; }
+
+	[Required]
+	[Column(TypeName = "nvarchar(50)")]
+	public string CurrentStatus { get; set; } = null!;
+
+	public ICollection<IssueEntity> Issues { get; } = null!;
+
 }
