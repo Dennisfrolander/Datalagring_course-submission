@@ -13,6 +13,6 @@ internal class StatusEntity
 	[Column(TypeName = "nvarchar(50)")]
 	public string CurrentStatus { get; set; } = null!;
 
-	public ICollection<IssueEntity> Issues { get; } = null!;
+	public ICollection<IssueEntity> Issues { get; } = new HashSet<IssueEntity>();
 
 }
