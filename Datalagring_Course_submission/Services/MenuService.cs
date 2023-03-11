@@ -14,7 +14,7 @@ internal class MenuService
 		{
 			Console.Clear();
 			Console.WriteLine("Välj något av följande alternativ:");
-			Console.WriteLine("1. Ägare \n2. Anställda \n3. Problem \n4. Avsluta. ");
+			Console.WriteLine("1. Ägare \n2. Anställda \n3. Ärende \n4. Avsluta. ");
 
 			switch (Console.ReadLine())
 			{
@@ -25,6 +25,7 @@ internal class MenuService
 					await EmployeeMenuAsync();
 					break;
 				case "3":
+					await IssueMenuAsync();
 					break;
 				case "4":
 					mainMenuRun = false;
@@ -83,7 +84,7 @@ internal class MenuService
 		}
 		while (OwnerMenuRun);
 	}
-	
+
 	public async Task CreateOwnerAsync()
 	{
 		var newRegistrationOwner = new OwnerForm();
@@ -164,7 +165,7 @@ internal class MenuService
 			{
 				Console.WriteLine($"Namn: {owner.FullName()}");
 				Console.WriteLine($"Email: {owner.Email}");
-				if(owner.PhoneNumber == null)
+				if (owner.PhoneNumber == null)
 					Console.WriteLine($"Telefon-nummer: {owner.PhoneNumber}");
 				else
 					Console.WriteLine($"Telefon-nummer: Inget tillagt");
@@ -182,10 +183,10 @@ internal class MenuService
 		Console.WriteLine("Skriv in förnamnet eller efternamnet.");
 		var userInput = Console.ReadLine();
 
-		if(!string.IsNullOrEmpty(userInput))
+		if (!string.IsNullOrEmpty(userInput))
 		{
 			var searchedOwners = await OwnerService.GetSearchedOwnerByName(userInput);
-			if(searchedOwners != null)
+			if (searchedOwners != null)
 			{
 				Console.Clear();
 				foreach (var owner in searchedOwners)
@@ -337,13 +338,193 @@ internal class MenuService
 			{
 				Console.WriteLine($"Namn: {employee.FullName()}");
 				Console.WriteLine($"Email: {employee.Email}");
-				Console.WriteLine($"Telenummer: {employee.PhoneNumber} \n");
+				Console.WriteLine($"Telenummer: {employee.PhoneNumber}");
+				Console.WriteLine($"Anställd som: {employee.JobTitle} \n");
 			}
 		}
 		else
 		{
 			Console.WriteLine("Det finns inga anställda i företaget än.");
 		}
+	}
+
+	#endregion
+
+	#region IssueSubMenu
+	public async Task IssueMenuAsync()
+	{
+		bool IssueMenuRun = true;
+		Console.Clear();
+		Console.WriteLine("Välj något av följande alternativ:");
+		Console.WriteLine("1. Skapa ett ärende \n2. Se alla ärenden \n3. Sök på ett specifikt ärende \n4. Ändra status på ett ärende \n5. Kommentera ett ärende \n6. Gå tillbaka ");
+		do
+		{
+			switch (Console.ReadLine())
+			{
+				case "1":
+					Console.Clear();
+					await CreateIssue();
+					Console.WriteLine("Tryck på valfri tanget för att gå tillbaka till huvudmenyn");
+					Console.ReadKey();
+
+					IssueMenuRun = false;
+					break;
+				case "2":
+					Console.Clear();
+					await AllIssues();
+					Console.WriteLine("Tryck på valfri tanget för att gå tillbaka till huvudmenyn");
+					Console.ReadKey();
+
+					IssueMenuRun = false;
+					break;
+				case "3":
+					Console.Clear();
+					await SpecificIssue();
+					Console.WriteLine("Tryck på valfri tanget för att gå tillbaka till huvudmenyn");
+					Console.ReadKey();
+					IssueMenuRun = false;
+					break;
+				case "4":
+					Console.Clear();
+					await UpdateSpecificIssueStatus();
+					Console.WriteLine("Tryck på valfri tanget för att gå tillbaka till huvudmenyn");
+					Console.ReadKey();
+					IssueMenuRun = false;
+					break;
+				case "5":
+					Console.Clear();
+					Console.WriteLine("Tryck på valfri tanget för att gå tillbaka till huvudmenyn");
+					Console.ReadKey();
+					IssueMenuRun = false;
+					break;
+				case "6":
+					Console.WriteLine("Tryck på valfri tanget för att gå tillbaka till huvudmenyn");
+					Console.ReadKey();
+					IssueMenuRun = false;
+					break;
+			}
+		}
+		while (IssueMenuRun);
+	}
+
+	public async Task CreateIssue()
+	{
+		var newIssue = new IssueForm();
+		Console.WriteLine("Skriv in följande för att skapa ett ärende, allt måste fyllas i.");
+		Console.Write("Beskriv vad ditt ärende/problem handlar om (Max 500 ord): ");
+		newIssue.Description = Console.ReadLine()!.Trim();
+
+		Console.Write("Din Email:");
+		newIssue.OwnerEmail = Console.ReadLine()!.Trim();
+
+		var OwnerExist = await OwnerService.GetSearchedOwnerByEmail(newIssue.OwnerEmail);
+
+		if (string.IsNullOrEmpty(newIssue.Description))
+			Console.WriteLine("Du måste fylla i beskrivningen av ärendet");
+
+		if (string.IsNullOrEmpty(newIssue.OwnerEmail))
+			Console.WriteLine("Du måste fylla i din Email");
+
+		if (OwnerExist == null)
+			Console.WriteLine("Din Email finns inte i vårat register, testa igen eller skapa en ny ägare. ");
+
+		if (!string.IsNullOrEmpty(newIssue.Description) &&
+			!string.IsNullOrEmpty(newIssue.OwnerEmail) &&
+			OwnerExist != null)
+		{
+			await IssueService.SaveIssueAsync(newIssue);
+			Console.Clear();
+			Console.WriteLine($"Hej {OwnerExist.FullName()}!");
+			Console.WriteLine($"Ditt Ärende-nummer är: {newIssue.IssueNumber}");
+			Console.WriteLine($"Vi återkommer med svar senast den {newIssue.DueDate.Day} {newIssue.DueDate.ToString("MMMM", new System.Globalization.CultureInfo("sv-SE"))}");
+		}
+	}
+
+	public async Task AllIssues()
+	{
+		var issues = await IssueService.GetAllIssuesAsync();
+		if (issues != null)
+		{
+			foreach (var issue in issues)
+			{
+				Console.WriteLine($"Ärende-nummer: {issue.IssueNumber}");
+				Console.WriteLine($"Namn: {issue.FirstName} {issue.LastName}");
+				Console.WriteLine($"Email: {issue.Email}");
+
+				if (issue.PhoneNumber == null)
+					Console.WriteLine($"Telefon-nummer: {issue.PhoneNumber}");
+				else
+					Console.WriteLine($"Telefon-nummer: Inget tillagt");
+
+
+				Console.WriteLine($"Status: {issue.CurrentStatus}");
+				Console.WriteLine($"Beskrivning: {issue.Description}");
+				Console.WriteLine($"Skapad: {issue.CreatedDate}");
+				Console.WriteLine($"Förväntad klar: {issue.DueDate.ToShortDateString()}");
+				Console.WriteLine($" \n");
+			}
+		}
+		else
+		{
+			Console.WriteLine("Det finns inga ägare i registret än.");
+		}
+	}
+
+	public async Task SpecificIssue()
+	{
+		Console.WriteLine("Skriv in ärende-numret:");
+		if (Guid.TryParse(Console.ReadLine(), out Guid IssueNumber))
+		{
+			Console.Clear();
+			var searchIssue = await IssueService.GetSearchedIssueByGuid(IssueNumber);
+
+			Console.WriteLine($"Ärende-nummer: {searchIssue.IssueNumber}");
+			Console.WriteLine($"Namn: {searchIssue.FirstName} {searchIssue.LastName}");
+			Console.WriteLine($"Email: {searchIssue.Email}");
+
+			if (searchIssue.PhoneNumber == null)
+				Console.WriteLine($"Telefon-nummer: {searchIssue.PhoneNumber}");
+			else
+				Console.WriteLine($"Telefon-nummer: Inget tillagt");
+
+
+			Console.WriteLine($"Status: {searchIssue.CurrentStatus}");
+			Console.WriteLine($"Beskrivning: {searchIssue.Description}");
+			Console.WriteLine($"Skapad: {searchIssue.CreatedDate}");
+			Console.WriteLine($"Förväntad klar: {searchIssue.DueDate.ToShortDateString()}");
+			Console.WriteLine($" \n");
+
+		}
+		else
+			Console.WriteLine("Ditt ärende-nummer finns inte eller så skrev du in fel, försök igen.");
+	}
+
+	public async Task UpdateSpecificIssueStatus()
+	{
+		Console.WriteLine("Skriv in ärende-numret på ärendet du vill uppdatera");
+		if (Guid.TryParse(Console.ReadLine(), out Guid IssueNumber))
+		{
+			Console.Clear();
+			var searchIssue = await IssueService.GetSearchedIssueByGuid(IssueNumber);
+
+			Console.WriteLine($"Ärende-nummer: {searchIssue.IssueNumber}");
+			Console.WriteLine($"Namn: {searchIssue.FirstName} {searchIssue.LastName}");
+			Console.WriteLine($"Status: {searchIssue.CurrentStatus}");
+
+			Console.WriteLine("\nSkriv in något av följade alternativ för att uppdatera:");
+			Console.WriteLine("Ej Påbörjad, Pågående eller Avslutad ");
+			var statusName = await IssueService.FindStatusWithString(Console.ReadLine()!);
+			if (statusName != null)
+			{
+				searchIssue.StatusId = statusName.Id;
+				await IssueService.UpdateIssueStatus(searchIssue);
+				Console.WriteLine($"Du har ändrat statusen till: {statusName.CurrentStatus}");
+			}
+			else
+				Console.WriteLine("Du skrev in fel alternativ");
+		}
+		else
+			Console.WriteLine("Ditt ärende-nummer finns inte eller så skrev du in fel, försök igen.");
 	}
 
 	#endregion

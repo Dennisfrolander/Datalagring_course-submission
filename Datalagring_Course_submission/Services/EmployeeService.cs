@@ -1,4 +1,5 @@
 ﻿using Datalagring_Course_submission.Contexts;
+using Datalagring_Course_submission.Models.Details;
 using Datalagring_Course_submission.Models.Entities;
 using Datalagring_Course_submission.Models.Forms;
 using Microsoft.EntityFrameworkCore;
@@ -50,15 +51,13 @@ internal class EmployeeService
 			return employees;
 		else
 			return null!;
-		
-	
 	}
 
-	public static async Task<PositionEntity> GetSearchedPositionById(int id)
+	public static async Task<PositionDetail> GetSearchedPositionById(int id)
 	{
 		var position = await _context.Positions.FirstOrDefaultAsync(x => x.Id == id);
 		if(position != null )
-			return new PositionEntity 
+			return new PositionDetail
 			{ 
 				Id = id, 
 				Title = position.Title
