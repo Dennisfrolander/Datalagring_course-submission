@@ -13,7 +13,7 @@ internal class IssueService
 
 	public static async Task SaveIssueAsync(IssueForm newIssue)
 	{
-		var ownerEntity = await _context.Owners.SingleOrDefaultAsync(owner => owner.Email == newIssue.OwnerEmail);
+		var ownerEntity = await _context.Owners.FirstOrDefaultAsync(owner => owner.Email == newIssue.OwnerEmail);
 		var newIssueEntity = new IssueEntity
 		{
 			IssueNumber = newIssue.IssueNumber,
@@ -26,7 +26,6 @@ internal class IssueService
 
 		if(ownerEntity != null)
 		{
-			newIssueEntity.IssueNumber = newIssue.IssueNumber;
 			newIssueEntity.OwnerId = ownerEntity.Id;
 			_context.Add(newIssueEntity);
 			await _context.SaveChangesAsync();

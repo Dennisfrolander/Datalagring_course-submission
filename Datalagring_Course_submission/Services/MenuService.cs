@@ -165,10 +165,11 @@ internal class MenuService
 			{
 				Console.WriteLine($"Namn: {owner.FullName()}");
 				Console.WriteLine($"Email: {owner.Email}");
-				if (owner.PhoneNumber == null)
+				if (!string.IsNullOrEmpty(owner.PhoneNumber))
 					Console.WriteLine($"Telefon-nummer: {owner.PhoneNumber}");
 				else
 					Console.WriteLine($"Telefon-nummer: Inget tillagt");
+
 				Console.WriteLine($"Adress: {owner.StreetName}, {owner.PostalCode},{owner.City}. \n");
 			}
 		}
@@ -267,7 +268,7 @@ internal class MenuService
 	{
 		var newEmployee = new EmployeeForm();
 		Console.WriteLine("Vilken position ska den anställda ha?");
-		Console.WriteLine("1. Property Manager \n2. Leasing Agent \n3. Asset Manager \n4. Maintenance Technician");
+		Console.WriteLine("1. Fastighetsförvaltare \n2. Uthyrningsansvarig \n3. Fastighetsekonom \n4. Underhållstekniker");
 		Console.WriteLine("Skriv siffran på ett av ovanstående (1-4)");
 		if (int.TryParse(Console.ReadLine(), out int jobId))
 		{
@@ -323,10 +324,6 @@ internal class MenuService
 		{
 			Console.WriteLine("Du måste skriva in en siffra");
 		}
-
-
-
-
 	}
 
 	public static async Task AllEmployees()
@@ -393,6 +390,7 @@ internal class MenuService
 					break;
 				case "5":
 					Console.Clear();
+					await CreateComment();
 					Console.WriteLine("Tryck på valfri tanget för att gå tillbaka till huvudmenyn");
 					Console.ReadKey();
 					IssueMenuRun = false;
@@ -478,22 +476,26 @@ internal class MenuService
 			Console.Clear();
 			var searchIssue = await IssueService.GetSearchedIssueByGuid(IssueNumber);
 
-			Console.WriteLine($"Ärende-nummer: {searchIssue.IssueNumber}");
-			Console.WriteLine($"Namn: {searchIssue.FirstName} {searchIssue.LastName}");
-			Console.WriteLine($"Email: {searchIssue.Email}");
+			if (searchIssue != null)
+			{
+				Console.WriteLine($"Ärende-nummer: {searchIssue.IssueNumber}");
+				Console.WriteLine($"Namn: {searchIssue.FirstName} {searchIssue.LastName}");
+				Console.WriteLine($"Email: {searchIssue.Email}");
 
-			if (searchIssue.PhoneNumber == null)
-				Console.WriteLine($"Telefon-nummer: {searchIssue.PhoneNumber}");
+				if (searchIssue.PhoneNumber == null)
+					Console.WriteLine($"Telefon-nummer: {searchIssue.PhoneNumber}");
+				else
+					Console.WriteLine($"Telefon-nummer: Inget tillagt");
+
+
+				Console.WriteLine($"Status: {searchIssue.CurrentStatus}");
+				Console.WriteLine($"Beskrivning: {searchIssue.Description}");
+				Console.WriteLine($"Skapad: {searchIssue.CreatedDate}");
+				Console.WriteLine($"Förväntad klar: {searchIssue.DueDate.ToShortDateString()}");
+				Console.WriteLine($" \n");
+			}
 			else
-				Console.WriteLine($"Telefon-nummer: Inget tillagt");
-
-
-			Console.WriteLine($"Status: {searchIssue.CurrentStatus}");
-			Console.WriteLine($"Beskrivning: {searchIssue.Description}");
-			Console.WriteLine($"Skapad: {searchIssue.CreatedDate}");
-			Console.WriteLine($"Förväntad klar: {searchIssue.DueDate.ToShortDateString()}");
-			Console.WriteLine($" \n");
-
+				Console.WriteLine("Ditt ärende-nummer finns inte eller så skrev du in fel, försök igen.");
 		}
 		else
 			Console.WriteLine("Ditt ärende-nummer finns inte eller så skrev du in fel, försök igen.");
@@ -522,6 +524,40 @@ internal class MenuService
 			}
 			else
 				Console.WriteLine("Du skrev in fel alternativ");
+		}
+		else
+			Console.WriteLine("Ditt ärende-nummer finns inte eller så skrev du in fel, försök igen.");
+	}
+
+	public async Task CreateComment()
+	{
+		var newComment = new CommentForm();
+		Console.WriteLine("Du måste använda dig av ett befintligt ärendenummer och en anställds E-postadress.");
+		Console.Write("Ärende-nummer:");
+
+		if (Guid.TryParse(Console.ReadLine(), out Guid IssueNumber))
+		{
+			Console.Clear();
+			var searchIssue = await IssueService.GetSearchedIssueByGuid(IssueNumber);
+
+			if (searchIssue != null)
+			{
+				Console.Write("E-postadress:");
+				var searchEmployee = await EmployeeService.GetSearchedEmployeeByEmail(Console.ReadLine()! ?? "");
+				if (searchEmployee != null)
+				{
+					Console.WriteLine($"##### ÄRENDE #####");
+					Console.WriteLine($"Ärende-nummer: {searchIssue.IssueNumber}");
+					Console.WriteLine($"Namn: {searchIssue.FirstName} {searchIssue.LastName}");
+					Console.WriteLine($"Ärende-nummer: {searchIssue.IssueNumber}");
+					Console.WriteLine($"Beskrivning: {searchIssue.Description} \n \n");
+					Console.Write("Kommentar:");
+					newComment.EmployeeEmail = searchEmployee.Email;
+					newComment.IssueNumber = searchIssue.IssueNumber;
+					newComment.Description = Console.ReadLine()! ?? "";
+					await CommentService.SaveCommentAsync(newComment);
+				}
+			}
 		}
 		else
 			Console.WriteLine("Ditt ärende-nummer finns inte eller så skrev du in fel, försök igen.");
