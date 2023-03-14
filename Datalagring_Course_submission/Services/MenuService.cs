@@ -459,7 +459,23 @@ internal class MenuService
 				Console.WriteLine($"Beskrivning: {issue.Description}");
 				Console.WriteLine($"Skapad: {issue.CreatedDate}");
 				Console.WriteLine($"Förväntad klar: {issue.DueDate.ToShortDateString()}");
-				Console.WriteLine($" \n");
+				
+				if (issue.CommentList?.Any() == true) 
+				{
+					Console.WriteLine($"   Kommentarar");
+					Console.WriteLine($"------------------");
+					foreach (var comment in issue.CommentList)
+					{
+						Console.WriteLine($"Kommentar: {comment.Description}");
+						Console.WriteLine($"Datum: {comment.CreatedDate}");
+						Console.WriteLine($"Gjord av: {comment.EmployeeName}");
+						Console.WriteLine($" \n");
+					}
+				}
+				else
+				{
+					Console.WriteLine($" \n");
+				}
 			}
 		}
 		else
@@ -493,6 +509,16 @@ internal class MenuService
 				Console.WriteLine($"Skapad: {searchIssue.CreatedDate}");
 				Console.WriteLine($"Förväntad klar: {searchIssue.DueDate.ToShortDateString()}");
 				Console.WriteLine($" \n");
+
+				if (searchIssue.CommentList != null)
+				{
+					foreach (var comment in searchIssue.CommentList)
+					{
+						Console.WriteLine($"Kommentar: {comment.Description}");
+						Console.WriteLine($"Datum: {comment.CreatedDate}");
+						Console.WriteLine($"Gjord av: {comment.EmployeeName}");
+					}
+				}
 			}
 			else
 				Console.WriteLine("Ditt ärende-nummer finns inte eller så skrev du in fel, försök igen.");

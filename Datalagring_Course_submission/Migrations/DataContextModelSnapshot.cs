@@ -215,7 +215,7 @@ namespace Datalagring_Course_submission.Migrations
             modelBuilder.Entity("Datalagring_Course_submission.Models.Entities.CommentEntity", b =>
                 {
                     b.HasOne("Datalagring_Course_submission.Models.Entities.EmployeeEntity", "Employee")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -275,6 +275,11 @@ namespace Datalagring_Course_submission.Migrations
             modelBuilder.Entity("Datalagring_Course_submission.Models.Entities.AddressEntity", b =>
                 {
                     b.Navigation("Owners");
+                });
+
+            modelBuilder.Entity("Datalagring_Course_submission.Models.Entities.EmployeeEntity", b =>
+                {
+                    b.Navigation("Comments");
                 });
 
             modelBuilder.Entity("Datalagring_Course_submission.Models.Entities.IssueEntity", b =>

@@ -28,4 +28,6 @@ internal class EmployeeEntity
 	public int PositionId { get; set; }
 	public PositionEntity Position { get; set; } = null!;
 
+	public ICollection<CommentEntity> Comments { get; } = new HashSet<CommentEntity>();
+
 }
