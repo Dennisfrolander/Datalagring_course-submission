@@ -65,4 +65,19 @@ internal class EmployeeService
 		else 
 			return null!;
 	}
+
+	public static async Task<EmployeeDetails> GetSearchedEmployeeByEmail(string email)
+	{
+		var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Email == email);
+		if (employee != null)
+			return new EmployeeDetails
+			{
+				Id = employee.Id,
+				FirstName = employee.FirstName,
+				LastName = employee.LastName,
+				PhoneNumber = employee.PhoneNumber,
+				Email = employee.Email
+			};
+		else return null!;
+	}
 }

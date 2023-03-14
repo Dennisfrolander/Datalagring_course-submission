@@ -65,17 +65,14 @@ namespace Datalagring_Course_submission.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("IssueId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("IssueNumber")
+                    b.Property<Guid>("IssueId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
 
-                    b.HasIndex("IssueNumber");
+                    b.HasIndex("IssueId");
 
                     b.ToTable("Comments");
                 });
@@ -218,14 +215,14 @@ namespace Datalagring_Course_submission.Migrations
             modelBuilder.Entity("Datalagring_Course_submission.Models.Entities.CommentEntity", b =>
                 {
                     b.HasOne("Datalagring_Course_submission.Models.Entities.EmployeeEntity", "Employee")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Datalagring_Course_submission.Models.Entities.IssueEntity", "Issue")
                         .WithMany("Comments")
-                        .HasForeignKey("IssueNumber")
+                        .HasForeignKey("IssueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -278,6 +275,11 @@ namespace Datalagring_Course_submission.Migrations
             modelBuilder.Entity("Datalagring_Course_submission.Models.Entities.AddressEntity", b =>
                 {
                     b.Navigation("Owners");
+                });
+
+            modelBuilder.Entity("Datalagring_Course_submission.Models.Entities.EmployeeEntity", b =>
+                {
+                    b.Navigation("Comments");
                 });
 
             modelBuilder.Entity("Datalagring_Course_submission.Models.Entities.IssueEntity", b =>

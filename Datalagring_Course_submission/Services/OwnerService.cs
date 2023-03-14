@@ -22,7 +22,7 @@ internal class OwnerService
 			PhoneNumber = newOwner.PhoneNumber,
 		};
 
-		var adressEntity = await _context.Adresses.SingleOrDefaultAsync
+		var adressEntity = await _context.Adresses.FirstOrDefaultAsync
 		(
 			addresses => addresses.StreetName == newOwner.StreetName &&
 			addresses.PostalCode == newOwner.PostalCode &&

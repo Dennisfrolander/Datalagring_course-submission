@@ -18,4 +18,6 @@ internal class IssueDetails
 	public string Description { get; set; } = null!;
 
 	public int StatusId { get; set; }
+
+	public List<CommentDetails>? CommentList { get; set; }
 }

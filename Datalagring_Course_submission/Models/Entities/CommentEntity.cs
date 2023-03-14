@@ -18,7 +18,7 @@ internal class CommentEntity
 	public DateTime CreatedDate { get; set; }
 
 	[Required]
-	public int IssueId { get; set; }
+	public Guid IssueId { get; set; }
 	public IssueEntity Issue { get; set; } = null!;
 
 	[Required]
