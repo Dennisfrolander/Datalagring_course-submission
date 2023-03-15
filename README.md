@@ -8,6 +8,20 @@
 
 ***Se till att du lagt till en connection mellan sqlserver och din lokaladatabas som finns i Contexts mappen (Local_Property_Db.mdf).***
 
+#
+
+### Vill använda en egen databas bör du lägga till dessa två Query:
+
+```
+INSERT INTO Positions
+VALUES ('Fastighetsförvaltare'), ('Uthyrningsansvarig'), ('Fastighetsekonom'), ('Underhållstekniker');
+```
+
+```
+INSERT INTO Statuses
+VALUES ('Ej påbörjad'), ('Pågående'), ('Avslutad');
+```
+
 
 <h3  align="center">ER-Diagram för databasen</h3>
 <div  align="center">
