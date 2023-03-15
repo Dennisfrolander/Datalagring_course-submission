@@ -89,7 +89,6 @@ internal class IssueService
 				CurrentStatus = issue.Status.CurrentStatus,
 				Description = issue.Description,
 				CommentList = new List<CommentDetails>()
-
 			};
 
 			if (issue.Comments != null && issue.Comments.Any())
@@ -104,7 +103,6 @@ internal class IssueService
 					});
 				}
 			}
-
 			return searchedIssue;
 		}
 

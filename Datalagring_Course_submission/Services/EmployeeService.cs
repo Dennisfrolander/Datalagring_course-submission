@@ -3,8 +3,6 @@ using Datalagring_Course_submission.Models.Details;
 using Datalagring_Course_submission.Models.Entities;
 using Datalagring_Course_submission.Models.Forms;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using System.Runtime.InteropServices;
 
 namespace Datalagring_Course_submission.Services;
 
