@@ -16,4 +16,11 @@
 
 ## Relationer:
 
-* AddressEntity: Denna entitet beskriver en adress som en ägare har. En ägare kan ha flera adresser men bara en adress
+* Addresses: Denna tabell beskriver en adress som en eller flera ägare har. En adress kan gå till flera ägare men bara en ägare kan kopplas till en adress.
+
+* Owners: Denna tabellbeskriver en ägare / kund som kan kopplas med en adress. Den kan även kopplas till flera stycken issues men bara en issue kan kopplas med en ägare / kund. 
+* Issues: Denna tabell beskriver ett ärende som kan skappas av en ägare. Ett ärende kan endast kopplas ihop med en ägare men en ägare kan kopplas ihop med flera ärende. 
+Den innehåller även många till en relation med statuses, flera ärende kan kopplas till en och samma status men bara en status kan kopplas till ett ärende. Den har också en till många relation med comments då ett ärende kan ha många kommenterar men bara en kommentar kan kopplas till ett ärende.
+* Statuses: Denna tabell innehåller olika typer av statusar som kopplas ihop med en till många relation med issues, en status kan gå till flera ärenden men bara ett ärende kan gå till en status.
+* Comments: Denna tabell innehåller en kommentar som har många till en relation med ärenden. Ett ärende kan ha flera kommentarer men en kommentar kan bara kopplas med ett ärende. det finns även  många till en relation med employees, en employee kan kopplas till flera kommenterar men bara en kommentar kan kopplas till en employee.
+Employees: Denna tabell innehåller information om en anställd, den har även  en till många relation med comments. Den har också en många till en relation med position för att en position kan finns i flera anställda medans en anställd kan bara ha en position.
