@@ -1,4 +1,4 @@
-<h1 align="center"> Ärendehanteringssystem | Datalagring Inlämning </h1>
+<h1 align="center"> Ärendehanteringssystem(Code-First) | Datalagring Inlämning </h1>
 <h4 align="center">Av Dennis Frölander</h4>
 
 ## Hur man startar programmet:
@@ -10,7 +10,7 @@
 
 #
 
-### Vill använda en egen databas bör du lägga till dessa två Query:
+### Vill skapa en egen databas med hjälp av Code-First bör du lägga till dessa två Query:
 
 ```
 INSERT INTO Positions
