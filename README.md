@@ -8,18 +8,6 @@
 
 ***Se till att du lagt till en connection mellan sqlserver och din lokaladatabas som finns i Contexts mappen (Local_Property_Db.mdf).***
 
-#
-## Vad kan du göra?
-### asd
-### asd###asd
-### asd
-### asd
-### asd
-
-
-
-
-
 
 <h3  align="center">ER-Diagram för databasen</h3>
 <div  align="center">
@@ -27,3 +15,5 @@
 </div>
 
 ## Relationer:
+
+* AddressEntity: Denna entitet beskriver en adress som en ägare har. En ägare kan ha flera adresser men bara en adress
