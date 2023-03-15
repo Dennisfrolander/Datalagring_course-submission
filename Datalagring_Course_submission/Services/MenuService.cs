@@ -445,6 +445,7 @@ internal class MenuService
 		{
 			foreach (var issue in issues)
 			{
+				Console.WriteLine("##### ÄRENDE #####");
 				Console.WriteLine($"Ärende-nummer: {issue.IssueNumber}");
 				Console.WriteLine($"Namn: {issue.FirstName} {issue.LastName}");
 				Console.WriteLine($"Email: {issue.Email}");
@@ -517,6 +518,7 @@ internal class MenuService
 						Console.WriteLine($"Kommentar: {comment.Description}");
 						Console.WriteLine($"Datum: {comment.CreatedDate}");
 						Console.WriteLine($"Gjord av: {comment.EmployeeName}");
+						Console.WriteLine("\n");
 					}
 				}
 			}
@@ -582,6 +584,7 @@ internal class MenuService
 					newComment.IssueNumber = searchIssue.IssueNumber;
 					newComment.Description = Console.ReadLine()! ?? "";
 					await CommentService.SaveCommentAsync(newComment);
+					Console.WriteLine($"Din kommentar på ärende-nummer {searchIssue.IssueNumber} är nu gjord!");
 				}
 			}
 		}
