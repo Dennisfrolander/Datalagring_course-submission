@@ -1,5 +1,4 @@
-﻿
-using Datalagring_Course_submission.Contexts;
+﻿using Datalagring_Course_submission.Contexts;
 using Datalagring_Course_submission.Models.Entities;
 using Datalagring_Course_submission.Models.Forms;
 using Microsoft.EntityFrameworkCore;

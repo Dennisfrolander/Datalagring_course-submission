@@ -156,7 +156,7 @@ internal class MenuService
 		}
 	}
 
-	public static async Task AllOwners()
+	public async Task AllOwners()
 	{
 		var allOwners = await OwnerService.GetAllOwnersAsync();
 		if (allOwners != null)
@@ -179,7 +179,7 @@ internal class MenuService
 		}
 	}
 
-	public static async Task SpecificSearchedOwners()
+	public async Task SpecificSearchedOwners()
 	{
 		Console.WriteLine("Skriv in förnamnet eller efternamnet.");
 		var userInput = Console.ReadLine();
@@ -208,7 +208,7 @@ internal class MenuService
 			Console.WriteLine("Ett fel inträffade, försök igen senare.");
 	}
 
-	public static async Task DeteleOwnerAsync()
+	public async Task DeteleOwnerAsync()
 	{
 		Console.WriteLine("Skriv in mailen på den ägaren du vill ta bort");
 		var userInput = Console.ReadLine();
