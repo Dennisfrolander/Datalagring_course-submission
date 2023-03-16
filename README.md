@@ -10,7 +10,7 @@
 
 #
 
-### Vill skapa en egen databas med hjälp av Code-First bör du lägga till dessa två Query:
+### Vill du skapa en egen databas med hjälp av Code-First bör du lägga till dessa två Query:
 
 ```
 INSERT INTO Positions
